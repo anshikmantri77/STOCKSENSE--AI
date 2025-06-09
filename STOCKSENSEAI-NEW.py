@@ -62,7 +62,7 @@ st.markdown("""
     }
     .sidebar-footer a {
         color: #1f77b4;
-        text-decoration: none;
+        text_decoration: none;
     }
     .sidebar-footer a:hover {
         text_decoration: underline;
@@ -843,27 +843,19 @@ def main():
                 yoy_rev_growth_min_pct = st.number_input("Min YoY Revenue Growth (%)", value=5.0, min_value=-100.0, step=1.0, format="%.1f")
                 yoy_pat_growth_min_pct = st.number_input("Min YoY PAT Growth (%)", value=5.0, min_value=-100.0, step=1.0, format="%.1f")
         
-        stock_categories_to_scan = st.multiselect(
-            "Select stock categories to scan:",
-            options=["Large Cap", "Mid Cap", "Small Cap"],
-            default=["Large Cap", "Mid Cap"] 
-        )
+        # Removed the multiselect for stock categories
+        stocks_to_scan_list = analyzer.all_stocks # Scan all stocks directly
         
-        stocks_to_scan_list = []
-        if "Large Cap" in stock_categories_to_scan: stocks_to_scan_list.extend(analyzer.large_cap_stocks)
-        if "Mid Cap" in stock_categories_to_scan: stocks_to_scan_list.extend(analyzer.mid_cap_stocks)
-        if "Small Cap" in stock_categories_to_scan: stocks_to_scan_list.extend(analyzer.small_cap_stocks)
-        
-        max_scan_limit = 50 # Limit the number of stocks to scan for performance reasons
+        max_scan_limit = 75 # Limit the number of stocks to scan for performance reasons
         if len(stocks_to_scan_list) > max_scan_limit:
-            st.warning(f"Scanning is limited to {max_scan_limit} random stocks from your selection for performance.")
+            st.warning(f"Scanning is limited to {max_scan_limit} random stocks from the entire list for performance.")
             stocks_to_scan_list = random.sample(stocks_to_scan_list, max_scan_limit)
 
 
         if st.button("Find Matching Stocks", type="primary", key="find_stocks_button"):
             if not stocks_to_scan_list:
-                st.warning("Please select at least one stock category.")
-                return # Stop if no category selected
+                st.warning("No stocks available to scan.")
+                return # Stop if no stock is chosen
 
             with st.spinner(f"Scanning {len(stocks_to_scan_list)} stocks... This might take a while."):
                 filtered_stocks_data = []
